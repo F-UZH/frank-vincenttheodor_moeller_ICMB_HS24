@@ -1,0 +1,11 @@
+---
+title: "Assignment 1"
+author: "Frank Moeller"
+---
+
+In this secound attempt to my introductory assignment, I just want to make a simple plot. Here it is:
+
+```{r}
+x <- rnorm(10000, mean = 100, sd = 15)
+hist(x)
+```

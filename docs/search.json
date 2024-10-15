@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n\nCode\n1 + 1\n\n\n[1] 2\n\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "hw1/index.html",
+    "href": "hw1/index.html",
+    "title": "Assignment 1",
+    "section": "",
+    "text": "In this secound attempt to my introductory assignment, I just want to make a simple plot. Here it is:\n\n\nCode\nx &lt;- rnorm(10000, mean = 100, sd = 15)\nhist(x)\n\n\n\n\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "frank-vincenttheodor_moeller_ICMB_HS24",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n\nCode\n1 + 1\n\n\n[1] 2\n\n\n\n\n\n\n\n Back to top"
+  }
+]
