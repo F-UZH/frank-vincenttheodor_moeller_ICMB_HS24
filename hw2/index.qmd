@@ -1,0 +1,94 @@
+---
+title: "Assignment 2"
+author: "Frank Moeller"
+---
+
+# Remaining Questions
+
+# Assignment 2
+
+## Concept
+
+-   2 actors interact (interaction function) exchange their wealth (transaction function)
+
+## Implementation
+
+### Initial Population distribution
+
+```{r}
+N<- 5000 # define N as default population size
+
+MU<- 100 # define MU as the default population mean
+
+population <- rnorm(N, mean = MU_1, sd = MU/5) # define the dataframe "population" as a normally distributed set of size "N" (5000) with a mean "M" (100$) and a sd of "MU/5" (20$) 
+
+##is this a dataframe?
+```
+
+-   Gaussian (normal) distribution
+
+-   dependent variable = simoleons (\$)
+
+### Visualization
+
+#### Measure
+
+-   Gini coefficient (measure of equality)
+
+    -   0=equality
+
+    -   1=inequality
+
+    -   ! Usually assessed for income, here wealth
+
+```{r}
+gini<- function(y) { 
+# measure of equality (0=equality, 1=inequality) applied for wealth [usually for income]
+y<- sort(y) #puts vector (wealth) of the dataframe in order
+n<- length(y) #assess the lenght of the vector (individuals) in the dataframe 
+## Question does length define the number of individuals?
+numer<- 2*sum((1:n)*y)#defines the numerator of the formular
+#sum(start value:end value)
+#summs the sorted vecotr (wealth) of the dataframe and multiplies by 2
+
+denom<- n*sum(y)#defines the denominator of the formular
+#multiplies the number of participants by the sum of the wealth  
+
+return ((numer/denom)-(n+1)/n)
+#puts the formula together
+}
+```
+
+#### Apply
+
+```{r}
+gini(population)
+```
+
+reference output: \~0.113
+
+#### Define hist
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+hist_custom<- function(popuation, label = 'pop',...) {
+label <- paste0(label,": G", round(gini(population), 2))
+# add and calculate the little gini coefficient in the top right corner
+
+population_df<- data.frame(population = population)
+#
+
+ggplot(population_df, aes(x = population))+
+  geom_histogram(bin=30,fill='blue',alpha=0.5,...)+
+  labs(title=label,x='Wealth',y='Count')+
+  theme_minimal()+
+  theme(legend.position="none")
+}
+```
+
+#### Visualize
+
+```{r}
+hist_custom(population)
+```
