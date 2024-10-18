@@ -9,7 +9,7 @@ author: "Frank Moeller"
 
 ## Concept
 
--   2 actors interact (interaction function) exchange their wealth (transaction function)
+-   2 actors interact (**interaction function**) exchange their wealth (**transaction function**)
 
 ## Implementation
 
@@ -91,4 +91,108 @@ ggplot(population_df, aes(x = population))+
 
 ```{r}
 hist_custom(population)
+```
+
+### Transactions
+
+#### Define Wealth-Conserving Transaction
+
+```{r}
+random_split<- function(A, B) {
+  pot<- A+B #sum the wealth of the agent A and B
+  share<- runif(1,min=0,max=pot)
+  #define conditions for sharing (here all possible conditions)
+  return(c(share,pot-share))
+  #put formula together
+  #one recives the share one the remaining wealth
+  
+  #A and B are undefined, insert their wealth to run the function
+}
+```
+
+#### Apply
+
+```{r}
+random_split(100, 100)
+```
+
+reference output: \~(39.322, 160.678)
+
+= sum should never exceed 200
+
+### Interactions
+
+```{r}
+anyone<- function(N)
+{
+  return(sample(0:(N-1),2))
+  #From N (number of agents) a sample of 2 participants is drawn at random
+  }
+```
+
+```{r}
+anyone(N)
+```
+
+reference output: \[1593, 1439\]
+
+=draws 2 random numbers from 1-N
+
+### Simulation
+
+#### Define
+
+```{r}
+step<-function(population, transaction=random_split, interaction=anyone)
+  {
+  #translate the defined functions into meaningfull names
+  i_j<- interaction(length(population))
+  i<- i_j[1]
+  j<- i_j[2]
+  #draw two agents called i & j
+  population[c(i, j)]<- transaction(population[i],population[j])
+  #run the transaction between the two agents and adjust their wealth according to the transaction
+  return (population)
+}
+
+simulate<- function(population,T,step_func=step,transaction=random_split, interaction=anyone) 
+{
+   #simulate the interactions over T steps
+  ##define T ???
+  pop_copy<-population
+  #create a copy of population
+  
+  result<- list(pop_copy)
+  ## why ???
+  
+  for (t in 1:T) 
+  {
+    pop_copy<- step_func(pop_copy, transaction, interaction)
+    result[[t+1]]<- pop_copy
+  }
+  return (result)
+}
+```
+
+#### Run
+
+```{r}
+testpopulation<- rep(100,4)
+#create testpopulation of 4 individuals, with 100$ each
+
+result<- simulate(testpopulation, 8)
+#simulate the population over 8 steps
+
+for(pop in result)
+{
+  print(pop)
+}
+```
+
+ERROR: "Warning: NAs produced"
+
+#### Visualize
+
+```{r}
+
 ```
