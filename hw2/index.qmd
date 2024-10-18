@@ -20,9 +20,9 @@ N<- 5000 # define N as default population size
 
 MU<- 100 # define MU as the default population mean
 
-population <- rnorm(N, mean = MU_1, sd = MU/5) # define the dataframe "population" as a normally distributed set of size "N" (5000) with a mean "M" (100$) and a sd of "MU/5" (20$) 
+population <- rnorm(N, mean = MU, sd = MU/5) # define the dataframe "population" as a normally distributed set of size "N" (5000) with a mean "M" (100$) and a sd of "MU/5" (20$) 
 
-##is this a dataframe?
+##what datastructur is this?
 ```
 
 -   Gaussian (normal) distribution
@@ -143,31 +143,35 @@ reference output: \[1593, 1439\]
 #### Define
 
 ```{r}
-step<-function(population, transaction=random_split, interaction=anyone)
+transaction<- random_split
+interaction<- anyone
+
+step<-function(population)
   {
   #translate the defined functions into meaningfull names
   i_j<- interaction(length(population))
-  i<- i_j[1]
-  j<- i_j[2]
+  i<- i_j[[1]]
+  j<- i_j[[2]]
+  ##ERROR fixed: doube bracket needed???
   #draw two agents called i & j
   population[c(i, j)]<- transaction(population[i],population[j])
   #run the transaction between the two agents and adjust their wealth according to the transaction
   return (population)
 }
 
-simulate<- function(population,T,step_func=step,transaction=random_split, interaction=anyone) 
+simulate<- function(population,T) 
 {
    #simulate the interactions over T steps
   ##define T ???
-  pop_copy<-population
+  pop_copy<- population
   #create a copy of population
   
   result<- list(pop_copy)
-  ## why ???
+  ## to generate overview of the wealth of all actors??
   
-  for (t in 1:T) 
+  for (t in 1:T)
   {
-    pop_copy<- step_func(pop_copy, transaction, interaction)
+    pop_copy<- step(pop_copy)
     result[[t+1]]<- pop_copy
   }
   return (result)
@@ -183,9 +187,9 @@ testpopulation<- rep(100,4)
 result<- simulate(testpopulation, 8)
 #simulate the population over 8 steps
 
-for(pop in result)
+for(testpopulation in result)
 {
-  print(pop)
+  print(testpopulation)
 }
 ```
 
