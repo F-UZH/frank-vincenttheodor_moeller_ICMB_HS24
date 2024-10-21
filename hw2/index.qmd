@@ -123,11 +123,13 @@ reference output: \~(39.322, 160.678)
 ### Interactions
 
 ```{r}
-anyone<- function(N)
-{
-  return(sample(0:(N-1),2))
-  #From N (number of agents) a sample of 2 participants is drawn at random
-  }
+anyone <- function(N) {
+  i <- sample(1:(N), 1)
+  j <- sample(setdiff(1:(N), i), 1)  # Ensures i and j are different
+### ERROR correction: ensures i and j are not the same value
+### ERROR correction: ensures that i and j can not be 0
+  return (c(i, j))
+}
 ```
 
 ```{r}
@@ -155,30 +157,30 @@ step<-function(population)
   ##ERROR fixed: doube bracket needed???
   #draw two agents called i & j
   population[c(i, j)]<- transaction(population[i],population[j])
-  #run the transaction between the two agents and adjust their wealth according to the transaction
+  #run the transaction between the two agents (adjust their wealth according to the transaction)
   return (population)
 }
 
 simulate<- function(population,T) 
 {
-   #simulate the interactions over T steps
-  ##define T ???
+   #simulate the interactions over T iterations
+  ##T needs to be defined whenever using the funktion
   pop_copy<- population
   #create a copy of population
   
   result<- list(pop_copy)
-  ## to generate overview of the wealth of all actors??
+  ## to generate an initial overview of the wealth of all actors
   
   for (t in 1:T)
   {
     pop_copy<- step(pop_copy)
+    #overwrite pop_copy with the result of step
     result[[t+1]]<- pop_copy
+    #generate an output for every iteration of the simulation
   }
   return (result)
 }
 ```
-
-#### Run
 
 ```{r}
 testpopulation<- rep(100,4)
@@ -195,8 +197,125 @@ for(testpopulation in result)
 
 ERROR: "Warning: NAs produced"
 
+idears:
+
+-   maybe the NA occures because the interaction function chooses the same person twice.
+
+    -   I checked by inserting a set of for into anyone (with N=5000 chances are super low) --\>often got the value 0 --\> **might generate NAs**
+
+-   the transaction leads to negative values
+
+    -   I checked with print() and it never did
+
 #### Visualize
 
-```{r}
+##### Run Simulation --\> output for every 10th iteration
 
+```{r}
+testpopulation <- rep(100, 4)  # Initial population
+max_iter<- 100
+
+result <- simulate(testpopulation, max_iter)  # Running the simulation
+
+# Loop to print testpopulation for each iteration, starting the iteration count from 0
+#for (iteration in 0:(length(result) - 1)) {
+for (print in 0:10){
+  tenth_iter<-max_iter/10
+  ##print values for iteration 0 to 10
+  cat(tenth_iter * print, " ")
+  ## cat = print
+  ## print = print iteration nr. 1
+  ## * Iter/10 = for every 10th of the total nr of iterations
+  cat(result[[tenth_iter * print +1]], "\n")
+  ## [[]] necessary for printing lists
+  ## result = the result of simulate (matrix of all values for all iterations)
+  ## formal writing: result[t] is how the population is at iteration t
+  ## "\n" = new line
+  }
+```
+
+##### print output sorted
+
+```{r}
+testpopulation <- rep(100, 4)  # Initial population
+max_iter<- 100
+
+result <- simulate(testpopulation, max_iter)  # Running the simulation
+
+for (print in 0:10){
+  tenth_iter<-max_iter/10
+  cat(tenth_iter * print, " ")
+  pop<-result[[tenth_iter * print +1]]
+  sorted_pop<- sort(pop)
+  #list that was the result before
+  cat(sorted_pop, "\n")
+  }
+```
+
+##### print with percentages
+
+```{r}
+max_person<-1000
+testpopulation <- rep(100, max_person)  # Initial population
+max_iter<- 10000
+percentiles<- c(1, 10, 50, 90, 99)
+
+result <- simulate(testpopulation, max_iter)  # Running the simulation
+
+for (print in 0:10){
+  tenth_iter<-max_iter/10
+  cat(tenth_iter * print, " ")
+  agent<-max_person/100*percentiles
+  #lists the person corresponding to the right percentile for the population
+  pop<-result[[tenth_iter * print +1]]
+  sorted_pop<- sort(pop)
+  #the sorted population we printed before
+  for (X in agent) {
+    #loop through variable agent and exert it for every value (percentiles)
+    cat(as.integer(sorted_pop[[X]]), " ")
+    #as.integer=sould be a full number (integer)
+    #exert the operation: print the wealth of the person X
+  }
+  cat("\n")
+}
+```
+
+##### add sd, and gini
+
+```{r}
+max_person<-1000
+testpopulation <- rep(100, max_person)  # Initial population
+max_iter<- 10000
+percentiles<- c(1, 10, 50, 90, 99)
+
+result <- simulate(testpopulation, max_iter)  # Running the simulation
+
+cat("iter    gini    1%    10%    50%    90%    99% \n")
+#creates header
+for (tenth_number in 0:10){
+  #the number from 0 to 10
+  tenth_iter<-max_iter/10
+  cat(tenth_iter * tenth_number, " ")
+  agent<-max_person/100*percentiles
+  #lists the person corresponding to the right percentile for the population
+  pop<-result[[tenth_iter * tenth_number +1]]
+  sorted_pop<- sort(pop)
+  #the sorted population we printed before
+  cat(round(gini(pop), 2)," ")
+  # prints gini coefficient for every tenth iteration
+  cat(round(sd(pop), 1)," ")
+  for (X in agent) {
+    #loop through variable agent and exert it for every value (percentiles)
+    cat(as.integer(sorted_pop[[X]]), " ")
+    #as.integer=sould be a full number (integer)
+    #exert the operation: print the wealth of the person X
+  }
+  cat("\n")
+  }
+```
+
+NOTE: I should change cat to print but I defined print somewhere as a number
+
+```{r}
+show(population)
 ```
